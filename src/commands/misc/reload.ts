@@ -61,12 +61,12 @@ abstract class ReloadCommand extends Command {
             return;
         }
 
-        if (!this.client.commands.get((interaction.options.get("command") ?? "") as string)) {
+        if (!this.client.commands.get(interaction.options.get("command")?.value as string)) {
             reject(interaction, `Unknown command !`)
             return;
         }
 
-        const commandBefore: CommandOptions | undefined = this.client.commands.get((interaction.options.get("command") ?? "") as string);
+        const commandBefore: CommandOptions | undefined = this.client.commands.get(interaction.options.get("command")?.value as string);
 
         if (!commandBefore) {
             reject(interaction, `Unknown command !`)
