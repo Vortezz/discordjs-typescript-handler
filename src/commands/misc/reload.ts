@@ -1,9 +1,9 @@
-import {CommandInteraction, Message} from "discord.js";
+import { CommandInteraction, Message } from "discord.js";
 import reject from "../../qresponses/reject";
 import success from "../../qresponses/sucess";
-import {CommandOptions} from "../../struct/CommandConfig";
-import {Command} from "../../struct/Command";
-import {SlashCommandBuilder} from "@discordjs/builders";
+import { CommandOptions } from "../../struct/CommandConfig";
+import { Command } from "../../struct/Command";
+import { SlashCommandBuilder } from "@discordjs/builders";
 
 abstract class ReloadCommand extends Command {
 
@@ -25,7 +25,7 @@ abstract class ReloadCommand extends Command {
         })
     }
 
-    run(message: Message, args: string[]) {
+    async run(message: Message, args: string[]) {
 
         if (args.length == 0) {
             reject(message, `Please give which command you want to reload !`)
@@ -44,8 +44,8 @@ abstract class ReloadCommand extends Command {
             return;
         }
 
-        delete require.cache[require.resolve(`../${commandBefore.category}/${commandBefore.name}.ts`)];
-        const commandFile = require(`../${commandBefore.category}/${commandBefore.name}.ts`).default;
+        delete require.cache[require.resolve(`../${commandBefore.category}/${commandBefore.name}.js`)];
+        const commandFile = (await import(`../${commandBefore.category}/${commandBefore.name}.js`)).default;
         if (commandFile.prototype instanceof Command) {
             const command: Command = new commandFile;
             command.client = this.client;
@@ -55,7 +55,7 @@ abstract class ReloadCommand extends Command {
 
     }
 
-    interact(interaction: CommandInteraction) {
+    async interact(interaction: CommandInteraction) {
         if (!interaction.options.get("command")) {
             reject(interaction, `Please give which command you want to reload !`)
             return;
@@ -73,8 +73,8 @@ abstract class ReloadCommand extends Command {
             return;
         }
 
-        delete require.cache[require.resolve(`../${commandBefore.category}/${commandBefore.name}.ts`)];
-        const commandFile = require(`../${commandBefore.category}/${commandBefore.name}.ts`).default;
+        delete require.cache[require.resolve(`../${commandBefore.category}/${commandBefore.name}.js`)];
+        const commandFile = (await import(`../${commandBefore.category}/${commandBefore.name}.js`)).default;
         if (commandFile.prototype instanceof Command) {
             const command: Command = new commandFile;
             command.client = this.client;
